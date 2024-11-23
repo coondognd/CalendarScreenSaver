@@ -15,6 +15,18 @@ CALENDARS = [
   ]
 OUTPUT_FILE = "events.txt"
 
+
+
+def is_late_in_the_day():
+    """
+    Determines if the current time is after 6 PM.
+
+    :return: True if the current time is after 6 PM, otherwise False.
+    """
+    now = datetime.now()
+    six_pm = now.replace(hour=18, minute=0, second=0, microsecond=0)
+    return six_pm > now
+
 def main():
   
 
@@ -72,15 +84,19 @@ def main():
     tomorrow = datetime.date.today() +  + datetime.timedelta(days=1)
     tomorrow_str = tomorrow.strftime('%Y-%m-%d')
     tomorrow_str = '2024-11-26'
+
+    relevant_date = today_str
+    event_prefix = "Today:"
+    if is_late_in_the_day():
+      relevant_date = tomorrow_str
+      event_prefix = "Tomorrow:"
     events = sorted(events, key=lambda event: event["start"].get("dateTime", event["start"].get("date")))
     # Prints the start and name of the next 10 events
-    event_str = ""
+    event_str = event_prefix + "\n"
     for event in events:
       start = event["start"].get("dateTime", event["start"].get("date"))
-      if start.startswith(today_str): 
-        event_str += "Today:" + event["summary"] + "\n"
-      if start.startswith(tomorrow_str):
-        event_str += "Tomorrow: " + event["summary"] + "\n"
+      if start.startswith(relevant_date): 
+        event_str += event["summary"] + "\n"
     f = open(OUTPUT_FILE, "w")
     f.write(event_str)
     f.close()
