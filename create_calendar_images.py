@@ -79,6 +79,9 @@ def add_text_with_background(image_filename, output_directory, text):
     :param output_directory: Path to the output directory.
     :param text: The text to add to the image.
     """
+    LEFT_PADDING = 20
+    TOP_PADDING = 20
+
     if not os.path.isfile(image_filename):
         print(f"The file '{image_filename}' does not exist.")
         return
@@ -94,18 +97,18 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Define font (use a default font if no .ttf file is specified)
         try:
-            font = ImageFont.truetype("arial.ttf", 20)  # Adjust font size as needed
+            font = ImageFont.truetype("arial.ttf", 26)  # Adjust font size as needed
         except IOError:
             font = ImageFont.load_default()
 
         # Calculate text size
-        text_l, text_t, text_r, text_b = draw.multiline_textbbox((20, 20), text, font=font)
+        text_l, text_t, text_r, text_b = draw.multiline_textbbox((LEFT_PADDING + 20, TOP_PADDING + 20), text, font=font)
         text_width = text_r - text_l
         text_height  = text_b - text_t
 
         # Define background rectangle
         padding = 10
-        background_position = (0, 0, text_width + 2 * padding, text_height + 2 * padding)
+        background_position = (LEFT_PADDING, TOP_PADDING, text_width + 2 * padding, text_height + 2 * padding)
         background_color = (0, 0, 0, 128)  # RGBA - black with 50% transparency
 
         # Create an overlay for the background
