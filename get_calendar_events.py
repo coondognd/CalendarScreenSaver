@@ -23,7 +23,7 @@ def is_late_in_the_day():
 
     :return: True if the current time is after 6 PM, otherwise False.
     """
-    now = datetime.now()
+    now = datetime.datetime.now()
     six_pm = now.replace(hour=18, minute=0, second=0, microsecond=0)
     return six_pm > now
 
