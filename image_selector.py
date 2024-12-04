@@ -4,7 +4,10 @@ import shutil
 import os
 import glob
 
-ALL_IMG_DIR = "./all_images"
+
+ALL_IMAGE_DIR = os.environ.get('ALL_IMAGE_DIR', './all_images')
+
+COOKED_DIR = "./cooked_images"
 RAW_DIR = "./raw_images"
 METADATA_FILE = "./metadata.txt"
 IMAGE_COUNT = 20
@@ -120,7 +123,7 @@ def main():
     print ("Saving new ones")
     # Put in the new ones
     for image in images_to_use:
-        shutil.copy2(ALL_IMG_DIR  + "/" + image, RAW_DIR + "/" + image)  
+        shutil.copy2(ALL_IMAGE_DIR  + "/" + image, RAW_DIR + "/" + image)  
 
 
 if __name__ == "__main__":
