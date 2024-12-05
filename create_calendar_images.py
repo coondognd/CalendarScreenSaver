@@ -27,7 +27,6 @@ def delete_all_files_in_directory(directory):
             file_path = os.path.join(directory, filename)
             if os.path.isfile(file_path):
                 os.remove(file_path)
-                print(f"Deleted file: {file_path}")
         print(f"All files in '{directory}' have been deleted.")
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -132,7 +131,7 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Save the modified image
         image.save(output_path, "PNG")
-        print(f"Image saved to: {output_path}")
+        #print(f"Image saved to: {output_path}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -142,10 +141,8 @@ def add_text_with_background(image_filename, output_directory, text):
 
 def main():
 
-    print ("Let's create some images")
-    # Stop screensaver if it's currently showing
+    # TODO: Stop screensaver if it's currently showing
 
-    print ("Clearing out any old image")
     # Delete output directory contents
     delete_all_files_in_directory(COOKED_DIR)
 
@@ -154,23 +151,20 @@ def main():
     event_string = None
     if event_list is not None and len(event_list) > 0:
         event_string = "\n".join(event_list)
-    print ("We'll add this to all the images: " + event_string)
 
     # Read images
     raw_image_filenames = get_filenames_in_directory(RAW_DIR)
-    print ("I found" + str(len(raw_image_filenames)) + " images") 
     # Add events to those images
     for raw_image_filename in raw_image_filenames:
         raw_file_path = os.path.join(RAW_DIR, raw_image_filename)
         if event_string is not None:
-            print ("Adding text to " + raw_image_filename)
             add_text_with_background(raw_file_path, COOKED_DIR, event_string)
         else:
-            print("No text to add, just copying")
             shutil.copy2(raw_file_path, COOKED_DIR + "/")  
         # Save image
 
     # Re-enable or reload screensaver if needed
+    print("Done creating images")
 
 if __name__ == "__main__":
   main()

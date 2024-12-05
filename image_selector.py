@@ -90,10 +90,8 @@ def main():
     for image in sorted_images:
         photo_date = sorted_images[image][5:9]
         if not wraparound and photo_date > past and photo_date < future:
-            print ("No rap.  Adding an image")
             seasonal_images.append(image)
         elif wraparound and photo_date > past or photo_date < future:
-            print ("Wrap.  Adding an image")
             seasonal_images.append(image)
     random.shuffle(seasonal_images)
 
