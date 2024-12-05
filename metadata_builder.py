@@ -2,8 +2,9 @@ import os
 from PIL import Image
 from PIL.ExifTags import TAGS
 
-RAW_DIR = "./raw_images"
-METADATA_FILE = "./metadata.txt"
+ALL_IMG_DIR = os.environ.get('ALL_IMAGE_DIR', "./all_images")
+METADATA_FILE = os.environ.get('METADATE_FILE', "./metadata.txt")
+
 
 def get_photo_dates(directory):
     """
@@ -54,7 +55,8 @@ def get_photo_dates(directory):
 
 
 def main():
-    photo_metadata = get_photo_dates(RAW_DIR)
+
+    photo_metadata = get_photo_dates(ALL_IMG_DIR)
     try:
         with open(METADATA_FILE, 'w') as file:
             

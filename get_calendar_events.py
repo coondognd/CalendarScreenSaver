@@ -13,7 +13,8 @@ CALENDARS = [
   'vif30abvsi70du85dvn3pd5tec@group.calendar.google.com', # Family
   'gsp4pcvtl33ug6rs0kb6liv03jvn3p43@import.calendar.google.com' #CHHS
   ]
-OUTPUT_FILE = "events.txt"
+
+OUTPUT_FILE = os.environ.get('EVENT_FILE', "events.txt")
 
 
 
@@ -25,7 +26,7 @@ def is_late_in_the_day():
     """
     now = datetime.datetime.now()
     six_pm = now.replace(hour=18, minute=0, second=0, microsecond=0)
-    return six_pm > now
+    return now > six_pm
 
 def main():
   
@@ -83,7 +84,6 @@ def main():
     today_str = datetime.date.today().strftime('%Y-%m-%d')
     tomorrow = datetime.date.today() +  + datetime.timedelta(days=1)
     tomorrow_str = tomorrow.strftime('%Y-%m-%d')
-    tomorrow_str = '2024-11-26'
 
     relevant_date = today_str
     event_prefix = "Today:"

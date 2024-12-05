@@ -6,10 +6,9 @@ import glob
 
 
 ALL_IMAGE_DIR = os.environ.get('ALL_IMAGE_DIR', './all_images')
-
-COOKED_DIR = "./cooked_images"
-RAW_DIR = "./raw_images"
-METADATA_FILE = "./metadata.txt"
+COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
+RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
+METADATA_FILE = os.environ.get('METADATA_FILE', "./metadata.txt")
 IMAGE_COUNT = 20
 
 def read_tab_delimited_file_to_dict(input_file):

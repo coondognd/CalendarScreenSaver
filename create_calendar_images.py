@@ -1,10 +1,12 @@
 import os
+import shutil
 from PIL import Image, ImageDraw, ImageFont
 
 
-RAW_DIR = "./raw_images"
-COOKED_DIR = "./cooked_images"
-EVENT_FILE = "./events.txt"
+
+COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
+RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
+EVENT_FILE = os.environ.get('EVENT_FILE', "./events.txt")
 
 #enum constants
 TODAY_MODE = 1
@@ -97,7 +99,7 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Define font (use a default font if no .ttf file is specified)
         try:
-            font = ImageFont.truetype("arial.ttf", 26)  # Adjust font size as needed
+            font = ImageFont.truetype("arial.ttf", 36)  # Adjust font size as needed
         except IOError:
             font = ImageFont.load_default()
 
@@ -108,7 +110,7 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Define background rectangle
         padding = 10
-        background_position = (LEFT_PADDING, TOP_PADDING, text_width + 2 * padding, text_height + 2 * padding)
+        background_position = (LEFT_PADDING, TOP_PADDING, LEFT_PADDING + (text_width + 2 * padding), TOP_PADDING + (text_height + 2 * padding))
         background_color = (0, 0, 0, 128)  # RGBA - black with 50% transparency
 
         # Create an overlay for the background
@@ -120,7 +122,7 @@ def add_text_with_background(image_filename, output_directory, text):
         image = Image.alpha_composite(image.convert("RGBA"), overlay)
 
         # Add text over the background
-        text_position = (padding, padding)
+        text_position = (LEFT_PADDING + padding, TOP_PADDING + padding)
         text_color = (255, 255, 255)  # White text
         draw = ImageDraw.Draw(image)
         draw.text(text_position, text, fill=text_color, font=font) # multiline_
@@ -149,7 +151,9 @@ def main():
 
     # Get events 
     event_list = read_file_to_array(EVENT_FILE)
-    event_string = "\n".join(event_list)
+    event_string = None
+    if event_list is not None and len(event_list) > 0:
+        event_string = "\n".join(event_list)
     print ("We'll add this to all the images: " + event_string)
 
     # Read images
@@ -157,10 +161,13 @@ def main():
     print ("I found" + str(len(raw_image_filenames)) + " images") 
     # Add events to those images
     for raw_image_filename in raw_image_filenames:
-        print ("Adding text to " + raw_image_filename)
-        
         raw_file_path = os.path.join(RAW_DIR, raw_image_filename)
-        add_text_with_background(raw_file_path, COOKED_DIR, event_string)
+        if event_string is not None:
+            print ("Adding text to " + raw_image_filename)
+            add_text_with_background(raw_file_path, COOKED_DIR, event_string)
+        else:
+            print("No text to add, just copying")
+            shutil.copy2(raw_file_path, COOKED_DIR + "/")  
         # Save image
 
     # Re-enable or reload screensaver if needed
