@@ -9,7 +9,7 @@ ALL_IMAGE_DIR = os.environ.get('ALL_IMAGE_DIR', './all_images')
 COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
 METADATA_FILE = os.environ.get('METADATA_FILE', "./metadata.txt")
-IMAGE_COUNT = 20
+IMAGE_COUNT = 40
 
 def read_tab_delimited_file_to_dict(input_file):
     """
@@ -69,12 +69,13 @@ def main():
         exit
     sorted_images = sort_dict_by_date_desc(images_and_dates)
 
-    num_recent_images = 4
-    if len(sorted_images) < 4:
+    num_recent_images = 7
+    if len(sorted_images) < 7:
         num_recent_images = len(sorted_images)
     print("Looking for " + str(num_recent_images) + " recent images")
     recent_images = list(sorted_images)[0:(num_recent_images-1)]
     print("Grabbed " + str(len(recent_images)) + " recent ones")
+    #print(recent_images)
 
     seasonal_images = []
     future_date = datetime.now() + timedelta(days=30)
@@ -94,6 +95,8 @@ def main():
         elif wraparound and photo_date > past or photo_date < future:
             seasonal_images.append(image)
     random.shuffle(seasonal_images)
+    # print("Seasonal images")
+    # print(seasonal_images)
 
     # Combine recent images with seasonal images
     images_to_use = recent_images + seasonal_images

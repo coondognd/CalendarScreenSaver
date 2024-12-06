@@ -98,7 +98,7 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Define font (use a default font if no .ttf file is specified)
         try:
-            font = ImageFont.truetype("arial.ttf", 36)  # Adjust font size as needed
+            font = ImageFont.truetype("arial.ttf", 50)  # Adjust font size as needed
         except IOError:
             font = ImageFont.load_default()
 
@@ -108,9 +108,9 @@ def add_text_with_background(image_filename, output_directory, text):
         text_height  = text_b - text_t
 
         # Define background rectangle
-        padding = 10
-        background_position = (LEFT_PADDING, TOP_PADDING, LEFT_PADDING + (text_width + 2 * padding), TOP_PADDING + (text_height + 2 * padding))
-        background_color = (0, 0, 0, 128)  # RGBA - black with 50% transparency
+        padding = 20
+        background_position = (LEFT_PADDING, TOP_PADDING, (2 * LEFT_PADDING) + (text_width + 2 * padding), (2 * TOP_PADDING) + (text_height + 2 * padding))
+        background_color = (0, 0, 0, 96)  # RGBA - black with 50% transparency
 
         # Create an overlay for the background
         overlay = Image.new("RGBA", image.size, (255, 255, 255, 0))
