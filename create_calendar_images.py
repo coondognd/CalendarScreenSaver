@@ -149,7 +149,7 @@ def main():
     # Get events 
     event_list = read_file_to_array(EVENT_FILE)
     event_string = None
-    if event_list is not None and len(event_list) > 0:
+    if event_list is not None and len(event_list) > 1:
         event_string = "\n".join(event_list)
 
     # Read images
