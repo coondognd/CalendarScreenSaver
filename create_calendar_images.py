@@ -96,9 +96,13 @@ def add_text_with_background(image_filename, output_directory, text):
         image = Image.open(image_filename)
         draw = ImageDraw.Draw(image)
 
+        font_size=36
+        if (image.height > image.width):
+            font_size = 68
+
         # Define font (use a default font if no .ttf file is specified)
         try:
-            font = ImageFont.truetype("arial.ttf", 50)  # Adjust font size as needed
+            font = ImageFont.truetype("arial.ttf", font_size)  # Adjust font size as needed
         except IOError:
             font = ImageFont.load_default()
 
