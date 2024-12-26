@@ -16,7 +16,10 @@ CALENDARS = [
 
 OUTPUT_FILE = os.environ.get('EVENT_FILE', "events.txt")
 
-
+def cleanup_event_name(event_name):
+  event_name = event_name.replace('SCHOOLS CLOSED', 'Schools Closed')
+  event_name = event_name.replace('HOLIDAY RECESS', 'Holiday Recess')
+  return event_name
 
 def is_late_in_the_day():
     """
@@ -96,7 +99,7 @@ def main():
     for event in events:
       start = event["start"].get("dateTime", event["start"].get("date"))
       if start.startswith(relevant_date): 
-        event_str += event["summary"] + "\n"
+        event_str += cleanup_event_name(event["summary"]) + "\n"
     f = open(OUTPUT_FILE, "w")
     f.write(event_str)
     f.close()

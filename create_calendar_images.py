@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
 EVENT_FILE = os.environ.get('EVENT_FILE', "./events.txt")
-FONT_FILE = os.environ.get('FONT_FILE', "arial.ttf")
+FONT_FILE = os.environ.get('FONT_FILE', "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
 
 #enum constants
 TODAY_MODE = 1
