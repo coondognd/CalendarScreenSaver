@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
 EVENT_FILE = os.environ.get('EVENT_FILE', "./events.txt")
+FONT_FILE = os.environ.get('FONT_FILE', "arial.ttf")
 
 #enum constants
 TODAY_MODE = 1
@@ -103,7 +104,7 @@ def add_text_with_background(image_filename, output_directory, text):
 
         # Define font (use a default font if no .ttf file is specified)
         try:
-            font = ImageFont.truetype("arial.ttf", font_size)  # Adjust font size as needed
+            font = ImageFont.truetype(FONT_FILE, font_size)  # Adjust font size as needed
         except IOError:
             font = ImageFont.load_default()
 
