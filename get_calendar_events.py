@@ -11,7 +11,8 @@ from googleapiclient.errors import HttpError
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 CALENDARS = [
   'vif30abvsi70du85dvn3pd5tec@group.calendar.google.com', # Family
-  'gsp4pcvtl33ug6rs0kb6liv03jvn3p43@import.calendar.google.com' #CHHS
+  'gsp4pcvtl33ug6rs0kb6liv03jvn3p43@import.calendar.google.com', #CHHS
+  'ncaaf_-m-04ls81_%4eotre+%44ame+%46ighting+%49rish+football#sports@group.v.calendar.google.com' # ND Football
   ]
 
 OUTPUT_FILE = os.environ.get('EVENT_FILE', "events.txt")
