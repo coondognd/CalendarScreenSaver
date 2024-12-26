@@ -97,8 +97,9 @@ def add_text_with_background(image_filename, output_directory, text):
         draw = ImageDraw.Draw(image)
 
         font_size=36
-        if (image.height > image.width):
-            font_size = 68
+        #if (image.height > image.width):
+        #    font_size = 68
+        #text = str(font_size) + " " + str(image.width) + "x" + str(image.height)
 
         # Define font (use a default font if no .ttf file is specified)
         try:

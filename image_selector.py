@@ -3,6 +3,7 @@ import random
 import shutil
 import os
 import glob
+from PIL import Image
 
 
 ALL_IMAGE_DIR = os.environ.get('ALL_IMAGE_DIR', './all_images')
@@ -121,9 +122,26 @@ def main():
         os.remove(f)
 
     print ("Saving new ones")
+    target_height = 1080
     # Put in the new ones
-    for image in images_to_use:
-        shutil.copy2(ALL_IMAGE_DIR  + "/" + image, RAW_DIR + "/" + image)  
+    for image_filename in images_to_use:
+        try:
+            # Open the image
+            with Image.open(ALL_IMAGE_DIR + "/" + image_filename) as img:
+                # Calculate new width while maintaining aspect ratio
+                aspect_ratio = img.width / img.height
+                new_width = int(target_height * aspect_ratio)
+
+                # Resize the image
+                resized_img = img.resize((new_width, target_height))
+
+                # Save the resized image
+                output_path = os.path.join(RAW_DIR, os.path.basename(image_filename))
+                resized_img.save(output_path)
+                print(f"Resized and saved: {output_path}")
+        except Exception as e:
+            print(f"Error processing {image_filename}: {e}")
+        #shutil.copy2(ALL_IMAGE_DIR  + "/" + image, RAW_DIR + "/" + image)  
 
 
 if __name__ == "__main__":
