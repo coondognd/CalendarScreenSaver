@@ -1,8 +1,9 @@
 import os
 import shutil
 from PIL import Image, ImageDraw, ImageFont
+from dotenv import load_dotenv
 
-
+load_dotenv()
 
 COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")

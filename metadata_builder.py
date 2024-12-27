@@ -1,10 +1,12 @@
 import os
+from dotenv import load_dotenv
 from PIL import Image
 from PIL.ExifTags import TAGS
 
+load_dotenv()
+
 ALL_IMG_DIR = os.environ.get('ALL_IMAGE_DIR', "./all_images")
 METADATA_FILE = os.environ.get('METADATE_FILE', "./metadata.txt")
-
 
 def get_photo_dates(directory):
     """
@@ -23,6 +25,8 @@ def get_photo_dates(directory):
         file_path = os.path.join(directory, filename)
 
         if not os.path.isfile(file_path):
+            subfolder_photo_dates = get_photo_dates(file_path)
+            photo_dates = photo_dates | subfolder_photo_dates
             continue  # Skip non-file entries
 
         try:
@@ -30,7 +34,7 @@ def get_photo_dates(directory):
             with Image.open(file_path) as img:
                 exif_data = img._getexif()
                 if not exif_data:
-                    photo_dates[filename] = "No EXIF data"
+                    photo_dates[file_path] = "No EXIF data"
                     continue
 
                 # Look for the DateTimeOriginal tag (usually tag ID 36867)
@@ -39,12 +43,12 @@ def get_photo_dates(directory):
                     if tag == "DateTimeOriginal":
                         # Format the date
                         photo_date = value.split(" ")[0].replace(":", "-")  # Format as 'YYYY-MM-DD'
-                        photo_dates[filename] = photo_date
+                        photo_dates[file_path] = photo_date
                         break
                 #else:
                 #    photo_dates[filename] = "No DateTimeOriginal tag"
         except Exception as e:
-            photo_dates[filename] = f"Error reading file: {e}"
+            photo_dates[file_path] = f"Error reading file: {e}"
 
     return photo_dates
 
