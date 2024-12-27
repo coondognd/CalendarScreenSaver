@@ -4,9 +4,11 @@ import shutil
 import os
 import glob
 from PIL import Image
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-ALL_IMAGE_DIR = os.environ.get('ALL_IMAGE_DIR', './all_images')
 COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
 METADATA_FILE = os.environ.get('METADATA_FILE', "./metadata.txt")
@@ -127,7 +129,7 @@ def main():
     for image_filename in images_to_use:
         try:
             # Open the image
-            with Image.open(ALL_IMAGE_DIR + "/" + image_filename) as img:
+            with Image.open(image_filename) as img:
                 # Calculate new width while maintaining aspect ratio
                 aspect_ratio = img.width / img.height
                 new_width = int(target_height * aspect_ratio)
@@ -141,7 +143,6 @@ def main():
                 print(f"Resized and saved: {output_path}")
         except Exception as e:
             print(f"Error processing {image_filename}: {e}")
-        #shutil.copy2(ALL_IMAGE_DIR  + "/" + image, RAW_DIR + "/" + image)  
 
 
 if __name__ == "__main__":
