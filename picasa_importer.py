@@ -1,5 +1,6 @@
 import os
 from PIL import Image, ExifTags
+import re
 
 PICASA_DIR = "./picasa"
 
@@ -41,6 +42,7 @@ def main():
 
     picasa_images = read_file_to_array("picasa.txt")
 
+    regex = re.compile(r"[^a-zA-Z0-9\.-_]", re.IGNORECASE)
     target_height = 1080
     # Put in the new ones
     for image_filename in picasa_images:
@@ -62,7 +64,7 @@ def main():
                 unique_filename = image_filename
                 unique_filename = unique_filename.replace("\\", "_")
                 unique_filename = unique_filename.replace("/", "_")
-
+                unique_filename = regex.sub("", unique_filename)
                 # Save the resized image
                 output_path = os.path.join(PICASA_DIR, unique_filename) # os.path.basename(image_filename))
                 resized_img.save(output_path, exif=exif_data)
