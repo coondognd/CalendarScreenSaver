@@ -1,6 +1,6 @@
 import os
 import shutil
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ExifTags
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -96,6 +96,7 @@ def add_text_with_background(image_filename, output_directory, text):
     try:
         # Open the image
         image = Image.open(image_filename)
+        #exif_data = image.info.get("exif")
         draw = ImageDraw.Draw(image)
 
         font_size=36
@@ -137,7 +138,7 @@ def add_text_with_background(image_filename, output_directory, text):
         output_path = os.path.join(output_directory, os.path.basename(image_filename))
 
         # Save the modified image
-        image.save(output_path, "PNG")
+        image.save(output_path, "PNG") #exif=exif_data)
         #print(f"Image saved to: {output_path}")
     except Exception as e:
         print(f"An error occurred: {e}")

@@ -133,13 +133,14 @@ def main():
                 # Calculate new width while maintaining aspect ratio
                 aspect_ratio = img.width / img.height
                 new_width = int(target_height * aspect_ratio)
+                #exif_data = img.info.get("exif")
 
                 # Resize the image
                 resized_img = img.resize((new_width, target_height))
 
                 # Save the resized image
                 output_path = os.path.join(RAW_DIR, os.path.basename(image_filename))
-                resized_img.save(output_path)
+                resized_img.save(output_path) #, exif=exif_data)
                 print(f"Resized and saved: {output_path}")
         except Exception as e:
             print(f"Error processing {image_filename}: {e}")

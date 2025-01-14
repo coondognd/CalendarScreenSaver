@@ -42,7 +42,7 @@ def main():
 
     picasa_images = read_file_to_array("picasa.txt")
 
-    regex = re.compile(r"[^a-zA-Z0-9\.-_]", re.IGNORECASE)
+    regex = re.compile(r"[^a-zA-Z0-9\.\-_]", re.IGNORECASE)
     target_height = 1080
     # Put in the new ones
     for image_filename in picasa_images:
@@ -54,6 +54,25 @@ def main():
             # Open the image
             with Image.open(full_image_filename) as img:
                 exif_data = img.info.get("exif")
+
+                # Rotate the image based on EXIF orientation
+                if exif_data:
+                    try:
+                        exif = {ExifTags.TAGS[k]: v for k, v in img._getexif().items() if k in ExifTags.TAGS}
+                        #print(exif)
+                        orientation = exif.get("Orientation")
+                        if orientation == 3:
+                            #print("Rotating 3: " + full_image_filename)
+                            img = img.rotate(180, expand=True)
+                        elif orientation == 6:
+                            #print("Rotating 6: " + full_image_filename)
+                            img = img.rotate(270, expand=True)
+                        elif orientation == 8:
+                            #print("Rotating 8: " + full_image_filename)
+                            img = img.rotate(90, expand=True)
+                    except Exception as e:
+                        print(f"Could not process EXIF orientation for {full_image_filename}: {e}")
+
                 # Calculate new width while maintaining aspect ratio
                 aspect_ratio = img.width / img.height
                 new_width = int(target_height * aspect_ratio)
@@ -64,12 +83,13 @@ def main():
                 unique_filename = image_filename
                 unique_filename = unique_filename.replace("\\", "_")
                 unique_filename = unique_filename.replace("/", "_")
+                unique_filename = unique_filename.replace(".JPG", ".jpeg")
+                unique_filename = unique_filename.replace(".jpg", ".jpeg")
                 unique_filename = regex.sub("", unique_filename)
                 # Save the resized image
                 output_path = os.path.join(PICASA_DIR, unique_filename) # os.path.basename(image_filename))
-                resized_img.save(output_path, exif=exif_data)
+                resized_img.save(output_path) #, exif=exif_data)
                 print(f"Resized and saved: {output_path}")
-                quit
         except Exception as e:
             print(f"Error processing {image_filename}: {e}")
 
