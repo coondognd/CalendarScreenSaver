@@ -88,7 +88,7 @@ def main():
                 unique_filename = regex.sub("", unique_filename)
                 # Save the resized image
                 output_path = os.path.join(PICASA_DIR, unique_filename) # os.path.basename(image_filename))
-                resized_img.save(output_path) #, exif=exif_data)
+                resized_img.save(output_path, exif=exif_data)
                 print(f"Resized and saved: {output_path}")
         except Exception as e:
             print(f"Error processing {image_filename}: {e}")
