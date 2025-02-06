@@ -23,6 +23,8 @@ OUTPUT_FILE = os.environ.get('EVENT_FILE', "events.txt")
 def cleanup_event_name(event_name):
   event_name = event_name.replace('SCHOOLS CLOSED', 'Schools Closed')
   event_name = event_name.replace('HOLIDAY RECESS', 'Holiday Recess')
+  if len(event_name) > 40:
+    event_name = event_name[0:40] + "..."
   return event_name
 
 def is_late_in_the_day():
