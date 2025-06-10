@@ -7,6 +7,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -18,7 +19,8 @@ CALENDARS = [
   'ncaaf_-m-04ls81_%4eotre+%44ame+%46ighting+%49rish+football#sports@group.v.calendar.google.com' # ND Football
   ]
 
-OUTPUT_FILE = os.environ.get('EVENT_FILE', "events.txt")
+ONE_DAY_FILE = os.environ.get('EVENT_FILE', "events.txt")
+ALL_EVENTS_FILE = os.environ.get('CALENDAR_FILE', "events.json")
 
 def cleanup_event_name(event_name):
   event_name = event_name.replace('SCHOOLS CLOSED', 'Schools Closed')
@@ -40,8 +42,10 @@ def is_late_in_the_day():
 def main():
   
 
-  if os.path.exists(OUTPUT_FILE):
-    os.remove(OUTPUT_FILE)
+  if os.path.exists(ONE_DAY_FILE):
+    os.remove(ONE_DAY_FILE)
+  if os.path.exists(ALL_EVENTS_FILE):
+    os.remove(ALL_EVENTS_FILE)
   
   """Shows basic usage of the Google Calendar API.
   Prints the start and name of the next 10 events on the user's calendar.
@@ -69,22 +73,30 @@ def main():
     service = build("calendar", "v3", credentials=creds)
 
     # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
-    print("Getting the upcoming 10 events")
+    # Calculate the most recent Sunday (or today if today is Sunday)
+    today = datetime.date.today()
+    days_since_sunday = today.weekday() + 1 if today.weekday() != 6 else 0
+    most_recent_sunday = today - datetime.timedelta(days=days_since_sunday)
+    start_datetime = datetime.datetime.combine(most_recent_sunday, datetime.time.min)
+    end_datetime = start_datetime + datetime.timedelta(days=14)
+    time_min = start_datetime.isoformat() + "Z"
+    time_max = end_datetime.isoformat() + "Z"
+
+    print(f"Getting events from {time_min} to {time_max}")
     events = []
     for calendar in CALENDARS:
-        events_result = (
-            service.events()
-            .list(
-                calendarId=calendar,
-                timeMin=now,
-                maxResults=10,
-                singleEvents=True,
-                orderBy="startTime",
-            )
-            .execute()
+      events_result = (
+        service.events()
+        .list(
+          calendarId=calendar,
+          timeMin=time_min,
+          timeMax=time_max,
+          singleEvents=True,
+          orderBy="startTime",
         )
-        events += events_result.get("items", [])
+        .execute()
+      )
+      events += events_result.get("items", [])
 
     if not events:
         print("No upcoming events found.")
@@ -102,12 +114,21 @@ def main():
     events = sorted(events, key=lambda event: event["start"].get("dateTime", event["start"].get("date")))
     # Prints the start and name of the next 10 events
     event_str = event_prefix + "\n"
+    events_by_day = {}
     for event in events:
       start = event["start"].get("dateTime", event["start"].get("date"))
+      isoStart = start.replace(":00Z", ":00-00:00")
+      cleaned_event_name = cleanup_event_name(event["summary"])
       if start.startswith(relevant_date): 
-        event_str += cleanup_event_name(event["summary"]) + "\n"
-    f = open(OUTPUT_FILE, "w")
+        event_str += cleaned_event_name + "\n"
+      if isoStart not in events_by_day:
+        events_by_day[isoStart] = []
+      events_by_day[isoStart].append(cleaned_event_name)
+    f = open(ONE_DAY_FILE, "w")
     f.write(event_str)
+    f.close()
+    f = open(ALL_EVENTS_FILE, "w")
+    f.write(json.dumps(events_by_day))
     f.close()
         
 
