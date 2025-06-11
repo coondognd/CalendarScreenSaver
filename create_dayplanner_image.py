@@ -22,7 +22,7 @@ def get_most_recent_sunday(date):
 def create_calendar_image(events_dict, output_filename):
     # Image setup
     width, height = 500, 768
-    image = Image.new("RGB", (width, height), "white")
+    image = Image.new("RGBA", (width, height), (255, 255, 255, 128))
     draw = ImageDraw.Draw(image)
 
     # Font setup
@@ -58,7 +58,7 @@ def create_calendar_image(events_dict, output_filename):
 
             # Highlight today
             if day == today:
-                draw.rectangle([x0, y0, x1, y1], fill=(255, 255, 200))
+                draw.rectangle([x0, y0, x1, y1], fill=(255, 255, 200, 128))
 
             # Header text: "Jun 8 - Saturday"
             header_text = f"{day.strftime('%b')} {day.day} - {day.strftime('%A')}"

@@ -15,32 +15,28 @@ def run_slideshow(display_time=5):
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.mouse.set_visible(False)
-    image_dir = "./cooked_images"
+    image_dir = "./raw_images"
     planner_image = "./planner.png"
 
     screen_width, screen_height = screen.get_size()
-    half_width = screen_width // 2
+    #half_width = screen_width // 2
 
     planner = load_image(planner_image)
-    planner_aspect = planner.get_width() / planner.get_height()
-    left_target_w, left_target_h = half_width, screen_height
-    if left_target_w / left_target_h > planner_aspect:
-        scaled_h = left_target_h
-        scaled_w = int(scaled_h * planner_aspect)
-    else:
-        scaled_w = left_target_w
-        scaled_h = int(scaled_w / planner_aspect)
-    planner_scaled = pygame.transform.smoothscale(planner, (scaled_w, scaled_h))
-    planner_x = (half_width - scaled_w) // 2
-    planner_y = (screen_height - scaled_h) // 2
+    planner_scale = screen_height / planner.get_height()
+    planner_scaled_h = screen_height
+    planner_scaled_w = int(planner.get_width() * planner_scale)
+    planner_scaled = pygame.transform.smoothscale(planner, (planner_scaled_w, planner_scaled_h))
+    planner_x = 0
+    planner_y = 0
 
+    remaining_w = screen_width - planner_scaled_w
     while True:
         image_paths = [os.path.join(image_dir, f) for f in os.listdir(image_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
 
         for image_path in image_paths:
             image = load_image(image_path)
             img_aspect = image.get_width() / image.get_height()
-            right_target_w, right_target_h = half_width, screen_height
+            right_target_w, right_target_h = remaining_w, screen_height
             if right_target_w / right_target_h > img_aspect:
                 scaled_h = right_target_h
                 scaled_w = int(scaled_h * img_aspect)
@@ -48,10 +44,10 @@ def run_slideshow(display_time=5):
                 scaled_w = right_target_w
                 scaled_h = int(scaled_w / img_aspect)
             image_scaled = pygame.transform.smoothscale(image, (scaled_w, scaled_h))
-            image_x = half_width + (half_width - scaled_w) // 2
+            image_x = planner_scaled_w + (remaining_w - scaled_w) // 2
             image_y = (screen_height - scaled_h) // 2
 
-            screen.fill((0, 0, 0))
+            screen.fill((0, 100, 0))
             screen.blit(planner_scaled, (planner_x, planner_y))
             screen.blit(image_scaled, (image_x, image_y))
             pygame.display.flip()
