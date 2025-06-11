@@ -21,7 +21,7 @@ def get_most_recent_sunday(date):
 
 def create_calendar_image(events_dict, output_filename):
     # Image setup
-    width, height = 500, 768
+    width, height = 500, 748
     image = Image.new("RGBA", (width, height), (255, 255, 255, 128))
     draw = ImageDraw.Draw(image)
 
