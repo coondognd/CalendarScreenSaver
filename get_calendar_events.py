@@ -74,11 +74,20 @@ def main():
 
     # Call the Calendar API
     # Calculate the most recent Sunday (or today if today is Sunday)
+
     today = datetime.date.today()
+    # Calculate the 1st day of the current month
+    first_of_month = today.replace(day=1)
+    # Calculate the most recent Sunday (or today if today is Sunday)
     days_since_sunday = today.weekday() + 1 if today.weekday() != 6 else 0
     most_recent_sunday = today - datetime.timedelta(days=days_since_sunday)
-    start_datetime = datetime.datetime.combine(most_recent_sunday, datetime.time.min)
-    end_datetime = start_datetime + datetime.timedelta(days=14)
+    # Choose the earlier of the two dates
+    start_date = min(first_of_month, most_recent_sunday)
+    start_datetime = datetime.datetime.combine(start_date, datetime.time.min)
+    # days_since_sunday = today.weekday() + 1 if today.weekday() != 6 else 0
+    # most_recent_sunday = today - datetime.timedelta(days=days_since_sunday)
+    # start_datetime = datetime.datetime.combine(most_recent_sunday, datetime.time.min)
+    end_datetime = start_datetime + datetime.timedelta(days=31)
     time_min = start_datetime.isoformat() + "Z"
     time_max = end_datetime.isoformat() + "Z"
 
