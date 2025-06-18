@@ -14,6 +14,8 @@ EVENT_FILE = os.environ.get('ALL_EVENTS_FILE', "./events.json")
 
 FONT_FILE = os.environ.get('FONT_FILE', "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
 
+GRADIENT_HEIGHT = 100
+
 # TODO:  Only read photo images once per day.  Read planner once per hour
 
 def load_image(path):
@@ -40,7 +42,7 @@ def render_calendar(events_by_day, width=1000, height=800):
     BACKGROUND_COLOR = (0,0,0)  # Semi-transparent white
     TODAY_BACKGROUND_COLOR = (60, 60, 50)  # Highlight color for today
     TEXT_COLOR = (255, 255, 255)
-    LINE_COLOR = (200, 200, 200)
+    LINE_COLOR = (20, 20, 20)
 
     # Layout
     weeks = list(cal.monthdatescalendar(year, month))
@@ -74,6 +76,9 @@ def render_calendar(events_by_day, width=1000, height=800):
             # Highlight today
             if day == today:
                 pygame.draw.rect(surface, TODAY_BACKGROUND_COLOR, (x, y, cell_width, cell_height), 0)
+            else:
+                # A hacky way to ensure events from other days don't spill over
+                pygame.draw.rect(surface, BACKGROUND_COLOR, (x, y, cell_width, cell_height), 0)
 
             # Dim days not in current month
             day_color = TEXT_COLOR if day.month == month else (160, 160, 160)
@@ -82,14 +87,14 @@ def render_calendar(events_by_day, width=1000, height=800):
 
             # Events
             events = events_by_day.get(day, [])
-            for i in range(min(3, len(events))):
+            if len(events) > 4:
+                events = events[:4]
+                events[3] = "..."  # Indicate more events
+            for i in range(len(events)):
                 if len(events[i]) > 15:
                     events[i] = events[i][:12] + '...'
                 event_surface = event_font.render(events[i], True, TEXT_COLOR)
                 surface.blit(event_surface, (x + 8, y + 24 + i * (event_font_size + 2)))
-            if len(events) > 4:
-                dots_surface = event_font.render("...", True, TEXT_COLOR)
-                surface.blit(dots_surface, (x + 8, y + 24 + 3 * (event_font_size + 2)))
 
             # Cell border
             pygame.draw.rect(surface, LINE_COLOR, (x, y, cell_width, cell_height), 1)
@@ -189,6 +194,7 @@ def run_slideshow(display_time=5):
         day_key = dt.date()
         events_by_day.setdefault(day_key, []).extend(events)
 
+    gradient_surface = None
     # Create the event surface
     if ASPECT == LANDSCAPE:
         event_area_height = screen_height - (2 * margin)
@@ -211,6 +217,9 @@ def run_slideshow(display_time=5):
         photo_area_y = margin
         event_surface = render_calendar(events_by_day, event_area_width, event_area_height)
         event_surface = pygame.transform.rotate(event_surface, 90)
+        gradient = load_image("gradient.png")
+        gradient_scaled = pygame.transform.smoothscale(gradient, (screen_width, GRADIENT_HEIGHT)) 
+        gradient_surface = pygame.transform.rotate(gradient_scaled, 90)
     # planner = load_image(planner_image)
     # planner_scale = screen_height / planner.get_height()
     # planner_scaled_h = screen_height - (2 * margin)
@@ -249,6 +258,9 @@ def run_slideshow(display_time=5):
             screen.fill((0, 0, 0))
             screen.blit(event_surface, (event_area_x, event_area_y))
             screen.blit(image_scaled, (image_x, image_y))
+
+            if gradient_surface is not None:
+                screen.blit(gradient_surface, ((screen_height/2) - GRADIENT_HEIGHT, 0))
             pygame.display.flip()
             start_time = time.time()
             while time.time() - start_time < display_time:
