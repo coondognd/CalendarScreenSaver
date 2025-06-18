@@ -114,9 +114,9 @@ def render_events(events_by_day, width=1000, height=1400):
     header_font = pygame.font.SysFont("DejaVuSans", header_font_size, bold=True)
     event_font = pygame.font.SysFont("DejaVuSans", event_font_size)
 
-    BACKGROUND_COLOR = (255, 255, 255, 128)  # Semi-transparent white
-    TEXT_COLOR = (0, 0, 0)
-    LINE_COLOR = TEXT_COLOR
+    BACKGROUND_COLOR = (255, 255, 255, 40)  # Semi-transparent white
+    TEXT_COLOR = (255, 255, 255)
+    LINE_COLOR = (80, 80, 80)
 
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
     surface.fill(BACKGROUND_COLOR)  # Semi-transparent white background
@@ -137,7 +137,7 @@ def render_events(events_by_day, width=1000, height=1400):
 
              # Highlight today
             if day == today:
-                pygame.draw.rect(surface, (255, 255, 200), (x0, y0, col_width, row_height), 0)
+                pygame.draw.rect(surface, (80, 80, 60), (x0, y0, col_width, row_height), 0)
 
 
             # Header: "Jun 8 - Sunday"
@@ -171,7 +171,7 @@ def run_slideshow(display_time=5):
 
     PORTRAIT = 0
     LANDSCAPE = 1
-    ASPECT = PORTRAIT
+    ASPECT = LANDSCAPE
     screen_width, screen_height = (0, 0)
     if ASPECT == LANDSCAPE:
         screen_width, screen_height = screen.get_size()
