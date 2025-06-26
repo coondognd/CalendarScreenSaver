@@ -1,6 +1,34 @@
 #!/usr/bin/env python3
-import pygame
+
 import os
+import sys
+#import pygame
+os.environ["SDL_VIDEO_ALLOW_SCREENSAVER"] = "1"
+os.environ["SDL_VIDEODRIVER"] = "x11"
+os.environ["DISPLAY"] = ":0"
+
+# Handle -window-id from xscreensaver
+window_id = None
+for argv in sys.argv:
+  print("Arg: ")
+  print(argv)
+if len(sys.argv) == 0:
+  print("No arguments")
+if "-window-id" in sys.argv:
+    idx = sys.argv.index("-window-id")
+    if idx + 1 < len(sys.argv):
+        window_id = sys.argv[idx + 1]
+        os.environ["SDL_WINDOWID"] = window_id
+        print("Window: ")
+        print( window_id )
+
+env_window = os.environ.get('XSCREENSAVER_WINDOW', None)
+if env_window is not None:
+  os.environ["SDL_WINDOWID"] = env_window
+print("ENV:")
+print(env_window)
+
+import pygame
 import time
 from PIL import Image
 from datetime import datetime, timedelta
@@ -35,9 +63,9 @@ def render_calendar(events_by_day, width=1000, height=800):
     header_font_size = 32
     day_font_size = 18
     event_font_size = 14
-    header_font = pygame.font.SysFont("DejaVuSans", header_font_size, bold=True)
-    day_font = pygame.font.SysFont("DejaVuSans", day_font_size, bold=True)
-    event_font = pygame.font.SysFont("DejaVuSans", event_font_size)
+    header_font = pygame.font.SysFont("DejaVu Sans", header_font_size, bold=True)
+    day_font = pygame.font.SysFont("DejaVu Sans", day_font_size, bold=True)
+    event_font = pygame.font.SysFont("DejaVu Sans", event_font_size)
     
     BACKGROUND_COLOR = (0,0,0)  # Semi-transparent white
     TODAY_BACKGROUND_COLOR = (60, 60, 50)  # Highlight color for today
@@ -161,10 +189,11 @@ def render_events(events_by_day, width=1000, height=1400):
 
     return surface
 
-
-def run_slideshow(display_time=5):
+def run_slideshow(display_time=20):
     pygame.init()
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((0, 0)) #, pygame.FULLSCREEN)
+#    screen = pygame.display.set_mode((1000, 1400), pygame.FULLSCREEN)
+    #pygame.mouse.set_visible(False)
     pygame.mouse.set_visible(False)
     image_dir = "./raw_images"
     #planner_image = "./planner.png"
