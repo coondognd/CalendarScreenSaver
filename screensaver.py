@@ -18,13 +18,13 @@ if "-window-id" in sys.argv:
     idx = sys.argv.index("-window-id")
     if idx + 1 < len(sys.argv):
         window_id = sys.argv[idx + 1]
-        os.environ["SDL_WINDOWID"] = window_id
+        os.putenv("SDL_WINDOWID", window_id)
         print("Window: ")
         print( window_id )
 
 env_window = os.environ.get('XSCREENSAVER_WINDOW', None)
 if env_window is not None:
-  os.environ["SDL_WINDOWID"] = env_window
+  os.putenv("SDL_WINDOWID", env_window)
 print("ENV:")
 print(env_window)
 
