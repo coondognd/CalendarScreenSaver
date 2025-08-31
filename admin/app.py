@@ -6,6 +6,7 @@ from pathlib import Path
 from flask import Flask, render_template, send_from_directory, request, jsonify, abort
 
 # ====== CONFIG ======
+RAW_DIR   = Path("/home/kcooney/CalendarScreenSaver/raw_images")
 COOKED_DIR   = Path("/home/kcooney/CalendarScreenSaver/cooked_images")
 ALL_DIR      = Path("/home/kcooney/CalendarScreenSaver/all_images")
 DELETED_DIR  = Path("/home/kcooney/CalendarScreenSaver/deleted_images")
@@ -58,11 +59,12 @@ def api_delete():
         return jsonify(ok=False, error="Invalid filename."), 400
 
     cooked_path = COOKED_DIR / filename
+    raw_path = COOKED_DIR / filename
     all_rel_path = filename.replace("--", "/")
     all_path = ALL_DIR / all_rel_path
     deleted_backup_path = DELETED_DIR / all_rel_path
 
-    results = {"cooked": None, "all_images_move": None, "dropbox": None}
+    results = {"cooked": None, "raw": None, "all_images_move": None, "dropbox": None}
 
     # 1) Delete from cooked_images
     try:
@@ -74,7 +76,17 @@ def api_delete():
     except Exception as e:
         results["cooked"] = f"error: {e}"
 
-    # 2) Move from all_images to deleted_images (preserving subfolder structure)
+    # 2) Delete from raw_images
+    try:
+        if raw_path.exists():
+            raw_path.unlink()
+            results["raw"] = "deleted"
+        else:
+            results["raw"] = "not_found"
+    except Exception as e:
+        results["raw"] = f"error: {e}"
+
+    # 3) Move from all_images to deleted_images (preserving subfolder structure)
     try:
         if all_path.exists():
             deleted_backup_path.parent.mkdir(parents=True, exist_ok=True)
@@ -85,11 +97,11 @@ def api_delete():
     except Exception as e:
         results["all_images_move"] = f"error: {e}"
 
-    # 3) Remove from Dropbox using Dropbox-Uploader
+    # 4) Remove from Dropbox using Dropbox-Uploader
     try:
         if DROPBOX_UPLOADER.exists() and DROPBOX_CONFIG.exists():
             # Use leading slash for a clear root-relative path in Dropbox
-            remote_path = "/" + all_rel_path
+            remote_path = "/Photos/Frame/" + all_rel_path
             proc = subprocess.run(
                 ["bash", str(DROPBOX_UPLOADER), "-f", str(DROPBOX_CONFIG), "delete", remote_path],
                 capture_output=True,
