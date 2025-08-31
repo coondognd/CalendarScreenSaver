@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-COOKED_DIR = os.environ.get('COOKED_DIR', "./cooked_images")
+ALL_DIR = os.environ.get('ALL_IMAGE_DIR', "./all_images")
 RAW_DIR = os.environ.get('RAW_DIR', "./raw_images")
 METADATA_FILE = os.environ.get('METADATA_FILE', "./metadata.txt")
 IMAGE_COUNT = 40
@@ -139,7 +139,13 @@ def main():
                 resized_img = img.resize((new_width, target_height))
 
                 # Save the resized image
-                output_path = os.path.join(RAW_DIR, os.path.basename(image_filename))
+                resized_name = image_filename
+                resized_name = resized_name.replace(ALL_DIR + "\\", "")
+                resized_name = resized_name.replace(ALL_DIR + "/", "")
+                resized_name = resized_name.replace(ALL_DIR, "")
+                resized_name = resized_name.replace("/", "--")
+                resized_name = resized_name.replace("\\", "--")
+                output_path = os.path.join(RAW_DIR, resized_name)
                 resized_img.save(output_path) #, exif=exif_data)
                 print(f"Resized and saved: {output_path}")
         except Exception as e:
