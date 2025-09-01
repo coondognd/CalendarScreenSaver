@@ -103,7 +103,7 @@ def api_delete():
             # Use leading slash for a clear root-relative path in Dropbox
             remote_path = "/Photos/Frame/" + all_rel_path
             proc = subprocess.run(
-                ["bash", str(DROPBOX_UPLOADER), "-f", str(DROPBOX_CONFIG), "delete", remote_path],
+                [str(DROPBOX_UPLOADER), "-f", str(DROPBOX_CONFIG), "delete", remote_path],
                 capture_output=True,
                 text=True,
                 check=False,
