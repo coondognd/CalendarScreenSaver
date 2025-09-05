@@ -10,6 +10,7 @@ RAW_DIR   = Path("/home/kcooney/CalendarScreenSaver/raw_images")
 COOKED_DIR   = Path("/home/kcooney/CalendarScreenSaver/cooked_images")
 ALL_DIR      = Path("/home/kcooney/CalendarScreenSaver/all_images")
 DELETED_DIR  = Path("/home/kcooney/CalendarScreenSaver/deleted_images")
+DROPBOX_DIR   = Path("/home/kcooney/Pictures/Dropbox/Frame")  # Dropbox folder syncs here
 
 # Path to the Dropbox-Uploader script and its config file
 DROPBOX_UPLOADER = Path("/home/kcooney/Dropbox-Uploader/dropbox_uploader.sh")  # adjust if needed
@@ -63,8 +64,9 @@ def api_delete():
     all_rel_path = filename.replace("--", "/")
     all_path = ALL_DIR / all_rel_path
     deleted_backup_path = DELETED_DIR / all_rel_path
+    dropbox_local_path = DROPBOX_DIR / all_rel_path
 
-    results = {"cooked": None, "raw": None, "all_images_move": None, "dropbox": None}
+    results = {"cooked": None, "raw": None, "dropbox_local": None, "all_images_move": None, "dropbox": None}
 
     # 1) Delete from cooked_images
     try:
@@ -86,7 +88,17 @@ def api_delete():
     except Exception as e:
         results["raw"] = f"error: {e}"
 
-    # 3) Move from all_images to deleted_images (preserving subfolder structure)
+    # 3) Delete from dropbox local folder
+    try:
+        if dropbox_local_path.exists():
+            dropbox_local_path.unlink()
+            results["dropbox_local"] = "deleted"
+        else:
+            results["dropbox_local"] = "not_found"
+    except Exception as e:
+        results["dropbox_local"] = f"error: {e}"
+
+    # 4) Move from all_images to deleted_images (preserving subfolder structure)
     try:
         if all_path.exists():
             deleted_backup_path.parent.mkdir(parents=True, exist_ok=True)
@@ -97,7 +109,7 @@ def api_delete():
     except Exception as e:
         results["all_images_move"] = f"error: {e}"
 
-    # 4) Remove from Dropbox using Dropbox-Uploader
+    # 5) Remove from Dropbox using Dropbox-Uploader
     try:
         if DROPBOX_UPLOADER.exists() and DROPBOX_CONFIG.exists():
             # Use leading slash for a clear root-relative path in Dropbox
